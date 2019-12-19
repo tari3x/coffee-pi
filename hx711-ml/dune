@@ -1,0 +1,19 @@
+
+;; data_only_dirs in 1.6
+(ignored_subdirs (hx711-c))
+
+(rule
+ (deps (source_tree hx711-c))
+ (targets libhx711_stubs.a)
+ (action (progn
+          (chdir hx711-c (run make))
+          (copy hx711-c/libhx711.a libhx711_stubs.a)
+          )))
+ 
+(library
+ (name hx711)
+ ;; in new version it's foreign_archives
+ (self_build_stubs_archive (hx711))
+ (libraries ctypes ctypes.foreign core)
+ (c_library_flags -lwiringPi)
+ )
