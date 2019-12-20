@@ -5,10 +5,6 @@
 
 int main(void)
 {
-  // This one doesn't work:
-  // wiringPiSetupGpio() ;
-  wiringPiSetup();
-
   initHX711(-43000, 200000.0);
 
   int i;

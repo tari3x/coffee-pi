@@ -26,6 +26,10 @@ static void edge ();
 
 void initHX711 (int offset, double div)
 {
+  // This one doesn't work:
+  // wiringPiSetupGpio() ;
+  wiringPiSetup();
+
   //printf("DT_PIN: %d, SCK_PIN: %d\n", getAlt(DT_PIN), getAlt(SCK_PIN));
   pinMode(DT_PIN, INPUT);
   pinMode(SCK_PIN, OUTPUT);

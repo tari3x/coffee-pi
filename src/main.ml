@@ -2,9 +2,10 @@ open Core
 open Async
 
 module H = Hx711
+module K = Ky006
 
 let empty_threshold = 100.
-let full_threshold = 400.
+let full_threshold = 300.
 let full_too_long_interval = sec 1800.
 let empty_confirmation_interval = sec 180.
 let buzz_interval = sec 60.
@@ -13,10 +14,6 @@ let poll_interval = sec 1.
 let first_full = ref None
 let last_non_empty = ref None
 let last_buzz = ref None
-
-(* CR: buzz *)
-let buzz () =
-  assert false
 
 let buzz () =
   let should_buzz =
@@ -27,7 +24,7 @@ let buzz () =
   if should_buzz
   then begin
     last_buzz := Some (Time.now ());
-    buzz ()
+    K.buzz ()
   end
 
 (**
@@ -49,7 +46,11 @@ let rec measure_loop () =
   let measure () =
     let reading = H.get_reading () in
     if reading > full_threshold  then full ();
-    if reading > empty_threshold then non_empty ()
+    if reading > empty_threshold then non_empty ();
+    print_s [%message
+                (reading : float)
+                (!first_full : Time.t option)
+                (!last_non_empty : Time.t option)];
   in
   let check () =
     let confirmed_empty () =
@@ -65,7 +66,10 @@ let rec measure_loop () =
         Time.(now () > add first_full full_too_long_interval)
     in
     if confirmed_empty ()
-    then first_full := None
+    then begin
+      first_full := None;
+      last_non_empty := None;
+    end
     else if full_too_long ()
     then buzz ()
   in
@@ -77,9 +81,11 @@ let rec measure_loop () =
 let main () =
   print_s [%message "starting"];
   H.init
-    ~zero_reading:0
+    ~zero_reading:(-44100)
     ~probe_weight:100.
-    ~probe_reading:100;
+    ~probe_reading:(-6000);
+  K.init ();
+  K.buzz ();
   measure_loop ()
 
 let command =

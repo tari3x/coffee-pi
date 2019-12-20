@@ -1,0 +1,19 @@
+
+;; data_only_dirs in 1.6
+(ignored_subdirs (ky006-c))
+
+(rule
+ (deps (source_tree ky006-c))
+ (targets libky006_stubs.a)
+ (action (progn
+          (chdir ky006-c (run make))
+          (copy ky006-c/libky006.a libky006_stubs.a)
+          )))
+ 
+(library
+ (name ky006)
+ ;; in new version it's foreign_archives
+ (self_build_stubs_archive (ky006))
+ (libraries ctypes ctypes.foreign core)
+ (c_library_flags -lwiringPi)
+ )

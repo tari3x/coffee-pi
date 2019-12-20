@@ -3,7 +3,9 @@
  (libraries
         core
         async
-        hx711)
+        hx711
+        ky006
+        )
  (preprocess (pps ppx_jane))
  ;; (link_flags :standard -cclib "-force_load libhx711_stubs.a")
 )
