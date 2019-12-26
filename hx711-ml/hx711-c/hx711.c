@@ -1,3 +1,13 @@
+/*
+*   Author: Tosatto Davide
+*
+*   Module that controls sample reading from the HX711 sensor.
+*
+*   Due to process switches, it can happen that a reading fails sometimes (on average one over 70).
+*
+*   Since to avoid this kernel mode operation is needed but I have no time to write down a device driver,
+*   I simply throw away bad readings, identified by a reading time higher than average. Algorithm below.
+*/
 
 #include "hx711.h"
 #include "precisionTiming.h"
